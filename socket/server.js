@@ -89,6 +89,17 @@ io.on('connection', (socket) => {
         socket_id: socket.id,
     });
 
+    // Log all incoming events from the client
+    socket.onAny((eventName, ...args) => {
+        console.log(`[Socket.io] Received event "${eventName}" from client ${socket.id}:`);
+        console.log(args);
+    });
+
+    // Broadcast message.created events received from a client to all other connected users
+    socket.on('message.created', (data) => {
+        socket.broadcast.emit('message.created', data);
+    });
+
     socket.on('disconnect', (reason) => {
         console.log('--------------------------------');
         console.log('User disconnected');
